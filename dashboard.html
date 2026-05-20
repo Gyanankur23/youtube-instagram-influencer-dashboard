@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdTech Influencer Analytics Dashboard | Power BI Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-300: #93c5fd;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-800: #1e40af;
+            --blue-900: #1e3a8a;
+            --blue-950: #172554;
+        }
+        
+        * {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+        }
+        
+        .powerbi-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        
+        .powerbi-card:hover {
+            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.12);
+        }
+        
+        .powerbi-header {
+            background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%);
+        }
+        
+        .powerbi-slicer {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #1e293b;
+            transition: all 0.2s ease;
+        }
+        
+        .powerbi-slicer:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .powerbi-button {
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-700) 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .powerbi-button:hover {
+            background: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-800) 100%);
+            transform: translateY(-1px);
+        }
+        
+        .powerbi-button-secondary {
+            background: white;
+            color: var(--blue-700);
+            border: 1px solid var(--blue-300);
+        }
+        
+        .powerbi-button-secondary:hover {
+            background: var(--blue-50);
+        }
+        
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--blue-900);
+        }
+        
+        .kpi-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .kpi-trend {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .trend-up {
+            color: #059669;
+        }
+        
+        .trend-down {
+            color: #dc2626;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--blue-900);
+            margin-bottom: 4px;
+        }
+        
+        .chart-subtitle {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+        
+        .nav-item {
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+        
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue-700);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-700) 100%);
+            color: white;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .data-table th {
+            background: var(--blue-900);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table tr:hover {
+            background: var(--blue-50);
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 powerbi-header flex flex-col text-white shrink-0">
+            <div class="p-5 border-b border-blue-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-chart-line text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg">Creator Analytics</h1>
+                        <p class="text-xs text-blue-200">Power BI Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1">
+                <div class="nav-item active" onclick="switchPage('overview')" id="nav-overview">
+                    <i class="fa-solid fa-layer-group mr-2"></i> Ecosystem Overview
+                </div>
+                <div class="nav-item" onclick="switchPage('subjects')" id="nav-subjects">
+                    <i class="fa-solid fa-book-open mr-2"></i> Subject Analysis
+                </div>
+                <div class="nav-item" onclick="switchPage('platforms')" id="nav-platforms">
+                    <i class="fa-solid fa-share-nodes mr-2"></i> Platform Performance
+                </div>
+                <div class="nav-item" onclick="switchPage('creators')" id="nav-creators">
+                    <i class="fa-solid fa-users mr-2"></i> Creator Profiles
+                </div>
+                <div class="nav-item" onclick="switchPage('trends')" id="nav-trends">
+                    <i class="fa-solid fa-chart-line mr-2"></i> Growth Trends
+                </div>
+            </nav>
+            
+            <div class="p-4 border-t border-blue-800">
+                <p class="text-xs text-blue-200">Data Source: Excel Analytics</p>
+                <p class="text-xs text-blue-300 mt-1">Records: <span id="total-records">466</span></p>
+                <p class="text-xs text-blue-300 mt-1">Last Updated: Live</p>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800" id="page-title">Ecosystem Overview</h2>
+                    <p class="text-sm text-slate-500">EdTech Influencer Analytics Dashboard</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="resetAllFilters()" class="powerbi-button powerbi-button-secondary">
+                        <i class="fa-solid fa-rotate-left mr-2"></i> Reset Filters
+                    </button>
+                    <button onclick="refreshData()" class="powerbi-button">
+                        <i class="fa-solid fa-refresh mr-2"></i> Refresh
+                    </button>
+                    <div class="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-200">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-semibold text-green-700">Live Data</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-6 scrollbar-thin">
+                
+                <!-- Overview Page -->
+                <div id="page-overview" class="page-content">
+                    <!-- Slicers -->
+                    <div class="powerbi-card p-4 mb-6">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">
+                            <i class="fa-solid fa-filter mr-2 text-blue-600"></i>Filter Slicers
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Core Area</label>
+                                <select id="slicer-core" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Areas</option>
+                                    <option value="JEE">JEE</option>
+                                    <option value="NEET">NEET</option>
+                                    <option value="JEE/NEET">JEE/NEET</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Subject</label>
+                                <select id="slicer-subject" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Subjects</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="General">General</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                                <select id="slicer-platform" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Platforms</option>
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cross Platform</label>
+                                <select id="slicer-cross" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Auditor</label>
+                                <select id="slicer-auditor" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Auditors</option>
+                                    <option value="Nipuna">Nipuna</option>
+                                    <option value="Faraz">Faraz</option>
+                                    <option value="Mahima">Mahima</option>
+                                    <option value="Aditi">Aditi</option>
+                                    <option value="rudveg">rudveg</option>
+                                    <option value="Unassigned">Unassigned</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Start Year</label>
+                                <select id="slicer-year" onchange="applyFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Years</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2011">2011</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Total Creators</p>
+                            <p class="kpi-value" id="kpi-total-creators">0</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up mr-1"></i>Active</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Total Subscribers</p>
+                            <p class="kpi-value" id="kpi-total-subs">0</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up mr-1"></i>Growing</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Avg Views</p>
+                            <p class="kpi-value" id="kpi-avg-views">0</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up mr-1"></i>Engaged</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Engagement Rate</p>
+                            <p class="kpi-value" id="kpi-engagement">0%</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up mr-1"></i>Healthy</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Cross Platform %</p>
+                            <p class="kpi-value" id="kpi-cross-percent">0%</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up mr-1"></i>Expanding</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Top Subject</p>
+                            <p class="kpi-value text-lg" id="kpi-top-subject">-</p>
+                            <p class="kpi-trend trend-up"><i class="fa-solid fa-star mr-1"></i>Dominant</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row 1 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="powerbi-card p-5 lg:col-span-2">
+                            <h3 class="chart-title">Top 10 Creators by Subscribers</h3>
+                            <p class="chart-subtitle">Horizontal bar chart showing subscriber count distribution</p>
+                            <div class="h-72">
+                                <canvas id="chart-top-creators"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Core Area Distribution</h3>
+                            <p class="chart-subtitle">Pie chart showing core area breakdown</p>
+                            <div class="h-72 flex items-center justify-center">
+                                <canvas id="chart-core-area"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row 2 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subject Distribution</h3>
+                            <p class="chart-subtitle">Donut chart showing subject breakdown</p>
+                            <div class="h-72 flex items-center justify-center">
+                                <canvas id="chart-subject-dist"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Platform Comparison</h3>
+                            <p class="chart-subtitle">Column chart comparing platforms</p>
+                            <div class="h-72">
+                                <canvas id="chart-platform-comp"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Engagement Gauge</h3>
+                            <p class="chart-subtitle">Doughnut gauge showing average engagement</p>
+                            <div class="h-72 flex items-center justify-center">
+                                <canvas id="chart-engagement-gauge"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row 3 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Channel Growth Over Time</h3>
+                            <p class="chart-subtitle">Line chart showing channel creation by year</p>
+                            <div class="h-72">
+                                <canvas id="chart-growth-timeline"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subscribers vs Views Scatter</h3>
+                            <p class="chart-subtitle">Scatter plot showing correlation</p>
+                            <div class="h-72">
+                                <canvas id="chart-scatter"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Table -->
+                    <div class="powerbi-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="chart-title">Detailed Data Table</h3>
+                                <p class="chart-subtitle">Filtered creator records with all metrics</p>
+                            </div>
+                            <input type="text" id="table-search" placeholder="Search creators..." 
+                                   class="powerbi-slicer w-64" onkeyup="filterTable()">
+                        </div>
+                        <div class="overflow-x-auto max-h-96 scrollbar-thin">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Channel</th>
+                                        <th>Platform</th>
+                                        <th>Core Area</th>
+                                        <th>Subject</th>
+                                        <th>Subscribers</th>
+                                        <th>Avg Views</th>
+                                        <th>Engagement %</th>
+                                        <th>Cross Platform</th>
+                                        <th>Auditor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-3" id="table-record-count">Showing 0 records</p>
+                    </div>
+                </div>
+                
+                <!-- Subject Analysis Page -->
+                <div id="page-subjects" class="page-content hidden">
+                    <!-- Slicers -->
+                    <div class="powerbi-card p-4 mb-6">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">
+                            <i class="fa-solid fa-filter mr-2 text-blue-600"></i>Subject Analysis Filters
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Core Area</label>
+                                <select id="slicer-sb-core" onchange="applySubjectFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Areas</option>
+                                    <option value="JEE">JEE</option>
+                                    <option value="NEET">NEET</option>
+                                    <option value="JEE/NEET">JEE/NEET</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                                <select id="slicer-sb-platform" onchange="applySubjectFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Platforms</option>
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Auditor</label>
+                                <select id="slicer-sb-auditor" onchange="applySubjectFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Auditors</option>
+                                    <option value="Nipuna">Nipuna</option>
+                                    <option value="Faraz">Faraz</option>
+                                    <option value="Mahima">Mahima</option>
+                                    <option value="Aditi">Aditi</option>
+                                    <option value="rudveg">rudveg</option>
+                                    <option value="Unassigned">Unassigned</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cross Platform</label>
+                                <select id="slicer-sb-cross" onchange="applySubjectFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Physics Creators</p>
+                            <p class="kpi-value" id="sb-kpi-physics">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Chemistry Creators</p>
+                            <p class="kpi-value" id="sb-kpi-chemistry">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Mathematics Creators</p>
+                            <p class="kpi-value" id="sb-kpi-maths">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Biology Creators</p>
+                            <p class="kpi-value" id="sb-kpi-biology">0</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subject Performance Radar</h3>
+                            <p class="chart-subtitle">Radar chart comparing subject metrics</p>
+                            <div class="h-80 flex items-center justify-center">
+                                <canvas id="chart-sb-radar"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subject vs Core Area Matrix</h3>
+                            <p class="chart-subtitle">Stacked bar showing subject distribution by core area</p>
+                            <div class="h-80">
+                                <canvas id="chart-sb-stacked"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subject Engagement Comparison</h3>
+                            <p class="chart-subtitle">Grouped column chart by subject</p>
+                            <div class="h-72">
+                                <canvas id="chart-sb-engagement"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subject Area Polar Chart</h3>
+                            <p class="chart-subtitle">Polar area chart showing subject distribution</p>
+                            <div class="h-72 flex items-center justify-center">
+                                <canvas id="chart-sb-polar"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Platform Performance Page -->
+                <div id="page-platforms" class="page-content hidden">
+                    <!-- Slicers -->
+                    <div class="powerbi-card p-4 mb-6">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">
+                            <i class="fa-solid fa-filter mr-2 text-blue-600"></i>Platform Analysis Filters
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Core Area</label>
+                                <select id="slicer-pl-core" onchange="applyPlatformFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Areas</option>
+                                    <option value="JEE">JEE</option>
+                                    <option value="NEET">NEET</option>
+                                    <option value="JEE/NEET">JEE/NEET</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Subject</label>
+                                <select id="slicer-pl-subject" onchange="applyPlatformFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Subjects</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="General">General</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Auditor</label>
+                                <select id="slicer-pl-auditor" onchange="applyPlatformFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Auditors</option>
+                                    <option value="Nipuna">Nipuna</option>
+                                    <option value="Faraz">Faraz</option>
+                                    <option value="Mahima">Mahima</option>
+                                    <option value="Aditi">Aditi</option>
+                                    <option value="rudveg">rudveg</option>
+                                    <option value="Unassigned">Unassigned</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cross Platform</label>
+                                <select id="slicer-pl-cross" onchange="applyPlatformFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">YouTube Channels</p>
+                            <p class="kpi-value" id="pl-kpi-youtube">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Other Platforms</p>
+                            <p class="kpi-value" id="pl-kpi-other">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">YouTube Subs</p>
+                            <p class="kpi-value" id="pl-kpi-yt-subs">0</p>
+                        </div>
+                        <div class="powerbi-card p-4">
+                            <p class="kpi-label">Cross Platform %</p>
+                            <p class="kpi-value" id="pl-kpi-cross">0%</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Platform Performance Comparison</h3>
+                            <p class="chart-subtitle">Grouped bar chart by platform</p>
+                            <div class="h-72">
+                                <canvas id="chart-pl-comparison"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Cross Platform Types</h3>
+                            <p class="chart-subtitle">Doughnut chart showing cross platform distribution</p>
+                            <div class="h-72 flex items-center justify-center">
+                                <canvas id="chart-pl-cross-types"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Platform Engagement Rate</h3>
+                            <p class="chart-subtitle">Line chart showing engagement by platform</p>
+                            <div class="h-72">
+                                <canvas id="chart-pl-engagement"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Platform Growth Area</h3>
+                            <p class="chart-subtitle">Area chart showing platform growth over time</p>
+                            <div class="h-72">
+                                <canvas id="chart-pl-area"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Creator Profiles Page -->
+                <div id="page-creators" class="page-content hidden">
+                    <!-- Creator Selector -->
+                    <div class="powerbi-card p-4 mb-6">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">
+                            <i class="fa-solid fa-user mr-2 text-blue-600"></i>Select Creator Profile
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="md:col-span-2">
+                                <select id="creator-selector" onchange="loadCreatorProfile()" class="powerbi-slicer w-full text-sm">
+                                    <option value="">Select a creator...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button onclick="randomCreator()" class="powerbi-button w-full">
+                                    <i class="fa-solid fa-shuffle mr-2"></i>Random Creator
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Creator Profile -->
+                    <div id="creator-profile" class="hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                            <!-- Profile Card -->
+                            <div class="powerbi-card p-6 lg:col-span-1">
+                                <div class="text-center mb-4">
+                                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white text-2xl font-bold" id="profile-initials">
+                                        AB
+                                    </div>
+                                    <h3 class="text-xl font-bold text-slate-800 mt-3" id="profile-name">Creator Name</h3>
+                                    <p class="text-sm text-slate-500" id="profile-channel">@channel</p>
+                                </div>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Platform</span>
+                                        <span class="font-semibold text-slate-800" id="profile-platform">YouTube</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Core Area</span>
+                                        <span class="font-semibold text-slate-800" id="profile-core">JEE</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Subject</span>
+                                        <span class="font-semibold text-slate-800" id="profile-subject">Physics</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Start Year</span>
+                                        <span class="font-semibold text-slate-800" id="profile-year">2020</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Subscribers</span>
+                                        <span class="font-semibold text-slate-800" id="profile-subs">100K</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Avg Views</span>
+                                        <span class="font-semibold text-slate-800" id="profile-views">50K</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">Engagement</span>
+                                        <span class="font-semibold text-slate-800" id="profile-engagement">5%</span>
+                                    </div>
+                                    <div class="flex justify-between py-2">
+                                        <span class="text-slate-500">Cross Platform</span>
+                                        <span class="font-semibold text-slate-800" id="profile-cross">Yes</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-xs font-semibold text-blue-700 mb-1">Key Points</p>
+                                    <p class="text-sm text-slate-600" id="profile-keypoints">-</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Charts -->
+                            <div class="powerbi-card p-5">
+                                <h3 class="chart-title">Creator Performance Radar</h3>
+                                <p class="chart-subtitle">Multi-dimensional performance metrics</p>
+                                <div class="h-80 flex items-center justify-center">
+                                    <canvas id="chart-creator-radar"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="powerbi-card p-5">
+                                <h3 class="chart-title">Engagement Gauge</h3>
+                                <p class="chart-subtitle">Creator engagement rate indicator</p>
+                                <div class="h-80 flex items-center justify-center">
+                                    <canvas id="chart-creator-gauge"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Growth Trends Page -->
+                <div id="page-trends" class="page-content hidden">
+                    <!-- Slicers -->
+                    <div class="powerbi-card p-4 mb-6">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">
+                            <i class="fa-solid fa-filter mr-2 text-blue-600"></i>Trend Analysis Filters
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Core Area</label>
+                                <select id="slicer-tr-core" onchange="applyTrendFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Areas</option>
+                                    <option value="JEE">JEE</option>
+                                    <option value="NEET">NEET</option>
+                                    <option value="JEE/NEET">JEE/NEET</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Subject</label>
+                                <select id="slicer-tr-subject" onchange="applyTrendFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Subjects</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="General">General</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                                <select id="slicer-tr-platform" onchange="applyTrendFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Platforms</option>
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Auditor</label>
+                                <select id="slicer-tr-auditor" onchange="applyTrendFilters()" class="powerbi-slicer w-full">
+                                    <option value="ALL">All Auditors</option>
+                                    <option value="Nipuna">Nipuna</option>
+                                    <option value="Faraz">Faraz</option>
+                                    <option value="Mahima">Mahima</option>
+                                    <option value="Aditi">Aditi</option>
+                                    <option value="rudveg">rudveg</option>
+                                    <option value="Unassigned">Unassigned</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Channel Growth Timeline</h3>
+                            <p class="chart-subtitle">Line chart showing channel creation over years</p>
+                            <div class="h-80">
+                                <canvas id="chart-tr-timeline"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Subscriber Growth Trend</h3>
+                            <p class="chart-subtitle">Area chart showing subscriber growth by year</p>
+                            <div class="h-80">
+                                <canvas id="chart-tr-subs-growth"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Engagement Trend Over Time</h3>
+                            <p class="chart-subtitle">Line chart showing engagement rate trends</p>
+                            <div class="h-72">
+                                <canvas id="chart-tr-engagement-trend"></canvas>
+                            </div>
+                        </div>
+                        <div class="powerbi-card p-5">
+                            <h3 class="chart-title">Cross Platform Adoption</h3>
+                            <p class="chart-subtitle">Line chart showing cross platform adoption rate</p>
+                            <div class="h-72">
+                                <canvas id="chart-tr-cross-adoption"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let rawData = [];
+        let filteredData = [];
+        let chartInstances = {};
+        
+        // Load data from JSON file
+        async function loadData() {
+            try {
+                const response = await fetch('dashboard_data.json');
+                rawData = await response.json();
+                filteredData = [...rawData];
+                initializeDashboard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Fallback to embedded data if fetch fails
+                rawData = getFallbackData();
+                filteredData = [...rawData];
+                initializeDashboard();
+            }
+        }
+        
+        // Fallback data (sample from Excel)
+        function getFallbackData() {
+            return [
+                {"name": "Ajay Singh", "channel": "JEE with Ajay", "platform": "YouTube", "start_year": 2013, "subscribers": 217000, "avg_views": 106000, "core_area": "JEE", "subject": "Mathematics", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 48.85},
+                {"name": "Prateek Kumar Behera", "channel": "JEEcompass (IITB)", "platform": "YouTube", "start_year": 2024, "subscribers": 18300, "avg_views": 30000, "core_area": "JEE", "subject": "General", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 163.93},
+                {"name": "Eknoor Singh", "channel": "EknoorSingh", "platform": "YouTube", "start_year": 2020, "subscribers": 168000, "avg_views": 15800, "core_area": "JEE", "subject": "Physics", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 9.4},
+                {"name": "Shreyash Gupta", "channel": "JEEsociety", "platform": "YouTube", "start_year": 2024, "subscribers": 73600, "avg_views": 12000, "core_area": "JEE", "subject": "General", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram,LinkedIn", "auditor": "Nipuna", "engagement_rate": 16.3},
+                {"name": "Anup Sir", "channel": "MathonGo", "platform": "YouTube", "start_year": 2015, "subscribers": 700000, "avg_views": 10000, "core_area": "JEE", "subject": "Mathematics", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 1.43},
+                {"name": "Ashish Arora", "channel": "Physics Galaxy", "platform": "YouTube", "start_year": 2011, "subscribers": 1000000, "avg_views": 50000, "core_area": "JEE", "subject": "Physics", "key_points": "JEE Mentor", "cross_platform": "Yes", "cross_type": "Instagram,LinkedIn", "auditor": "Nipuna", "engagement_rate": 5.0},
+                {"name": "Mohit Tyagi", "channel": "Mohit Tyagi", "platform": "YouTube", "start_year": 2012, "subscribers": 1700000, "avg_views": 25400, "core_area": "JEE", "subject": "Mathematics", "key_points": "JEE guidance", "cross_platform": "Yes", "cross_type": "Telegram, Instagram,LinkedIn", "auditor": "Nipuna", "engagement_rate": 1.49},
+                {"name": "Nishant Jindal", "channel": "Nishant Jindal (IIT Delhi)", "platform": "YouTube", "start_year": 2018, "subscribers": 600000, "avg_views": 8100, "core_area": "JEE", "subject": "General", "key_points": "JEE guidance", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 1.35},
+                {"name": "Vinit Kumar", "channel": "Vinit Kumar [IIT Bombay]", "platform": "YouTube", "start_year": 2022, "subscribers": 332000, "avg_views": 25400, "core_area": "JEE", "subject": "Physics", "key_points": "JEE guidance", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 7.65},
+                {"name": "Prashant Singh", "channel": "Prashant Singh [IIT Bombay]", "platform": "YouTube", "start_year": 2020, "subscribers": 101000, "avg_views": 20000, "core_area": "JEE", "subject": "Mathematics", "key_points": "JEE guidance", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 19.8},
+                {"name": "Dr Rakshita Singh", "channel": "Dr Rakshita Singh", "platform": "YouTube", "start_year": 2014, "subscribers": 2180000, "avg_views": 150000, "core_area": "NEET", "subject": "Biology", "key_points": "MBBS mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 6.88},
+                {"name": "Garima Goel", "channel": "Dr Garima Goel", "platform": "YouTube", "start_year": 2013, "subscribers": 100000, "avg_views": 15000, "core_area": "NEET", "subject": "Biology", "key_points": "MBBS mentor", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 15.0},
+                {"name": "Dr Anand Mani", "channel": "Dr Anand Mani", "platform": "YouTube", "start_year": 2022, "subscribers": 41400, "avg_views": 65000, "core_area": "NEET", "subject": "Biology", "key_points": "MBBS mentor", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 157.0},
+                {"name": "Aman Tilak", "channel": "DrAmanTilak", "platform": "YouTube", "start_year": 2013, "subscribers": 584000, "avg_views": 65000, "core_area": "NEET", "subject": "Biology", "key_points": "MBBS mentor", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 11.13},
+                {"name": "Akanksha Karnwal", "channel": "Akansha Karnwal Unacademy", "platform": "YouTube", "start_year": 2020, "subscribers": 112000, "avg_views": 25000, "core_area": "NEET", "subject": "Chemistry", "key_points": "MBBS mentor", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 22.32},
+                {"name": "Dr Amit Gupta", "channel": "Dr Amit Gupta", "platform": "YouTube", "start_year": 2016, "subscribers": 67300, "avg_views": 10000, "core_area": "NEET", "subject": "Biology", "key_points": "NEET strategy", "cross_platform": "Yes", "cross_type": "Instagram", "auditor": "Nipuna", "engagement_rate": 14.86},
+                {"name": "Aditya Joshi", "channel": "Aditya Joshi", "platform": "YouTube", "start_year": 2021, "subscribers": 222000, "avg_views": 8000, "core_area": "NEET", "subject": "Physics", "key_points": "NEET strategy", "cross_platform": "Yes", "cross_type": "Telegram, Instagram", "auditor": "Nipuna", "engagement_rate": 3.6},
+                {"name": "Ritu Ratewal", "channel": "Biofairy Ritu Rattewal", "platform": "YouTube", "start_year": 2011, "subscribers": 777000, "avg_views": 40000, "core_area": "NEET", "subject": "Biology", "key_points": "NEET strategy", "cross_platform": "No", "cross_type": "None", "auditor": "Unassigned", "engagement_rate": 5.15},
+                {"name": "Rittik Baheti", "channel": "Rittik Baheti(IITIAN)", "platform": "YouTube", "start_year": 2017, "subscribers": 259000, "avg_views": 28600, "core_area": "JEE", "subject": "General", "key_points": "JEE strategy and mentorship", "cross_platform": "Yes", "cross_type": "instagram, linkedin, whatsapp, telegram", "auditor": "rudveg", "engagement_rate": 11.04},
+                {"name": "Ripudaman Singh", "channel": "RDS Vlogs[IIT Guwahati]", "platform": "YouTube", "start_year": 2022, "subscribers": 455000, "avg_views": 14800, "core_area": "JEE", "subject": "Physics", "key_points": "JEE mentor -speciality in org chem", "cross_platform": "Yes", "cross_type": "instagram", "auditor": "rudveg", "engagement_rate": 3.25}
+            ];
+        }
+        
+        // Initialize dashboard
+        function initializeDashboard() {
+            document.getElementById('total-records').textContent = rawData.length;
+            populateCreatorSelector();
+            applyFilters();
+        }
+        
+        // Populate creator selector
+        function populateCreatorSelector() {
+            const selector = document.getElementById('creator-selector');
+            selector.innerHTML = '<option value="">Select a creator...</option>';
+            rawData.forEach(creator => {
+                const option = document.createElement('option');
+                option.value = creator.name;
+                option.textContent = `${creator.name} (${creator.platform})`;
+                selector.appendChild(option);
+            });
+        }
+        
+        // Switch page
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(`nav-${pageId}`).classList.add('active');
+            
+            // Update title
+            const titles = {
+                'overview': 'Ecosystem Overview',
+                'subjects': 'Subject Analysis',
+                'platforms': 'Platform Performance',
+                'creators': 'Creator Profiles',
+                'trends': 'Growth Trends'
+            };
+            document.getElementById('page-title').textContent = titles[pageId];
+            
+            // Apply filters for the page
+            if (pageId === 'overview') applyFilters();
+            else if (pageId === 'subjects') applySubjectFilters();
+            else if (pageId === 'platforms') applyPlatformFilters();
+            else if (pageId === 'trends') applyTrendFilters();
+        }
+        
+        // Apply overview filters
+        function applyFilters() {
+            const core = document.getElementById('slicer-core').value;
+            const subject = document.getElementById('slicer-subject').value;
+            const platform = document.getElementById('slicer-platform').value;
+            const cross = document.getElementById('slicer-cross').value;
+            const auditor = document.getElementById('slicer-auditor').value;
+            const year = document.getElementById('slicer-year').value;
+            
+            filteredData = rawData.filter(item => {
+                if (core !== 'ALL' && item.core_area !== core) return false;
+                if (subject !== 'ALL' && item.subject !== subject) return false;
+                if (platform !== 'ALL' && item.platform !== platform) return false;
+                if (cross !== 'ALL' && item.cross_platform !== cross) return false;
+                if (auditor !== 'ALL' && item.auditor !== auditor) return false;
+                if (year !== 'ALL' && item.start_year.toString() !== year) return false;
+                return true;
+            });
+            
+            updateKPIs();
+            updateOverviewCharts();
+            updateTable();
+        }
+        
+        // Apply subject filters
+        function applySubjectFilters() {
+            const core = document.getElementById('slicer-sb-core').value;
+            const platform = document.getElementById('slicer-sb-platform').value;
+            const auditor = document.getElementById('slicer-sb-auditor').value;
+            const cross = document.getElementById('slicer-sb-cross').value;
+            
+            filteredData = rawData.filter(item => {
+                if (core !== 'ALL' && item.core_area !== core) return false;
+                if (platform !== 'ALL' && item.platform !== platform) return false;
+                if (auditor !== 'ALL' && item.auditor !== auditor) return false;
+                if (cross !== 'ALL' && item.cross_platform !== cross) return false;
+                return true;
+            });
+            
+            updateSubjectKPIs();
+            updateSubjectCharts();
+        }
+        
+        // Apply platform filters
+        function applyPlatformFilters() {
+            const core = document.getElementById('slicer-pl-core').value;
+            const subject = document.getElementById('slicer-pl-subject').value;
+            const auditor = document.getElementById('slicer-pl-auditor').value;
+            const cross = document.getElementById('slicer-pl-cross').value;
+            
+            filteredData = rawData.filter(item => {
+                if (core !== 'ALL' && item.core_area !== core) return false;
+                if (subject !== 'ALL' && item.subject !== subject) return false;
+                if (auditor !== 'ALL' && item.auditor !== auditor) return false;
+                if (cross !== 'ALL' && item.cross_platform !== cross) return false;
+                return true;
+            });
+            
+            updatePlatformKPIs();
+            updatePlatformCharts();
+        }
+        
+        // Apply trend filters
+        function applyTrendFilters() {
+            const core = document.getElementById('slicer-tr-core').value;
+            const subject = document.getElementById('slicer-tr-subject').value;
+            const platform = document.getElementById('slicer-tr-platform').value;
+            const auditor = document.getElementById('slicer-tr-auditor').value;
+            
+            filteredData = rawData.filter(item => {
+                if (core !== 'ALL' && item.core_area !== core) return false;
+                if (subject !== 'ALL' && item.subject !== subject) return false;
+                if (platform !== 'ALL' && item.platform !== platform) return false;
+                if (auditor !== 'ALL' && item.auditor !== auditor) return false;
+                return true;
+            });
+            
+            updateTrendCharts();
+        }
+        
+        // Reset all filters
+        function resetAllFilters() {
+            document.querySelectorAll('select').forEach(select => {
+                select.value = 'ALL';
+            });
+            document.getElementById('creator-selector').value = '';
+            document.getElementById('creator-profile').classList.add('hidden');
+            
+            const activePage = document.querySelector('.page-content:not(.hidden)').id.replace('page-', '');
+            if (activePage === 'overview') applyFilters();
+            else if (activePage === 'subjects') applySubjectFilters();
+            else if (activePage === 'platforms') applyPlatformFilters();
+            else if (activePage === 'trends') applyTrendFilters();
+        }
+        
+        // Refresh data
+        function refreshData() {
+            loadData();
+        }
+        
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+        
+        // Update KPIs
+        function updateKPIs() {
+            const count = filteredData.length;
+            const totalSubs = filteredData.reduce((sum, item) => sum + item.subscribers, 0);
+            const avgViews = count > 0 ? Math.round(filteredData.reduce((sum, item) => sum + item.avg_views, 0) / count) : 0;
+            const avgEngagement = count > 0 ? (filteredData.reduce((sum, item) => sum + item.engagement_rate, 0) / count).toFixed(1) : 0;
+            const crossCount = filteredData.filter(item => item.cross_platform === 'Yes').length;
+            const crossPercent = count > 0 ? ((crossCount / count) * 100).toFixed(1) : 0;
+            
+            // Find top subject
+            const subjectCounts = {};
+            filteredData.forEach(item => {
+                subjectCounts[item.subject] = (subjectCounts[item.subject] || 0) + 1;
+            });
+            let topSubject = '-';
+            let maxCount = 0;
+            for (const [subject, count] of Object.entries(subjectCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    topSubject = subject;
+                }
+            }
+            
+            document.getElementById('kpi-total-creators').textContent = count;
+            document.getElementById('kpi-total-subs').textContent = formatNumber(totalSubs);
+            document.getElementById('kpi-avg-views').textContent = formatNumber(avgViews);
+            document.getElementById('kpi-engagement').textContent = avgEngagement + '%';
+            document.getElementById('kpi-cross-percent').textContent = crossPercent + '%';
+            document.getElementById('kpi-top-subject').textContent = topSubject;
+        }
+        
+        // Update overview charts
+        function updateOverviewCharts() {
+            // Top 10 Creators Bar Chart
+            const top10 = [...filteredData].sort((a, b) => b.subscribers - a.subscribers).slice(0, 10);
+            renderChart('chart-top-creators', {
+                type: 'bar',
+                data: {
+                    labels: top10.map(item => item.name.split(' ').slice(0, 2).join(' ')),
+                    datasets: [{
+                        label: 'Subscribers',
+                        data: top10.map(item => item.subscribers),
+                        backgroundColor: '#2563eb',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Subscribers: ' + formatNumber(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Core Area Pie Chart
+            const coreAreaCounts = {};
+            filteredData.forEach(item => {
+                coreAreaCounts[item.core_area] = (coreAreaCounts[item.core_area] || 0) + 1;
+            });
+            renderChart('chart-core-area', {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(coreAreaCounts),
+                    datasets: [{
+                        data: Object.values(coreAreaCounts),
+                        backgroundColor: ['#1e40af', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.raw / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.raw + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Subject Distribution Donut Chart
+            const subjectCounts = {};
+            filteredData.forEach(item => {
+                subjectCounts[item.subject] = (subjectCounts[item.subject] || 0) + 1;
+            });
+            renderChart('chart-subject-dist', {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(subjectCounts),
+                    datasets: [{
+                        data: Object.values(subjectCounts),
+                        backgroundColor: ['#1e3a8a', '#1e40af', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.raw / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.raw + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Platform Comparison Column Chart
+            const platformData = {};
+            filteredData.forEach(item => {
+                if (!platformData[item.platform]) {
+                    platformData[item.platform] = { subs: 0, views: 0, count: 0 };
+                }
+                platformData[item.platform].subs += item.subscribers;
+                platformData[item.platform].views += item.avg_views;
+                platformData[item.platform].count += 1;
+            });
+            renderChart('chart-platform-comp', {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(platformData),
+                    datasets: [
+                        {
+                            label: 'Total Subscribers',
+                            data: Object.values(platformData).map(p => p.subs),
+                            backgroundColor: '#1e40af'
+                        },
+                        {
+                            label: 'Avg Views',
+                            data: Object.values(platformData).map(p => p.views / p.count),
+                            backgroundColor: '#3b82f6'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatNumber(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Engagement Gauge
+            const avgEngagement = filteredData.length > 0 ? (filteredData.reduce((sum, item) => sum + item.engagement_rate, 0) / filteredData.length) : 0;
+            renderChart('chart-engagement-gauge', {
+                type: 'doughnut',
+                data: {
+                    labels: ['Engagement', 'Remaining'],
+                    datasets: [{
+                        data: [Math.min(avgEngagement, 100), Math.max(100 - avgEngagement, 0)],
+                        backgroundColor: ['#2563eb', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+            
+            // Growth Timeline Line Chart
+            const yearCounts = {};
+            filteredData.forEach(item => {
+                yearCounts[item.start_year] = (yearCounts[item.start_year] || 0) + 1;
+            });
+            const sortedYears = Object.keys(yearCounts).sort();
+            renderChart('chart-growth-timeline', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        label: 'Channels Created',
+                        data: sortedYears.map(year => yearCounts[year]),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Scatter Chart
+            renderChart('chart-scatter', {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Creators',
+                        data: filteredData.map(item => ({
+                            x: item.subscribers,
+                            y: item.avg_views,
+                            name: item.name
+                        })),
+                        backgroundColor: '#2563eb',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return point.name + ': ' + formatNumber(point.x) + ' subs, ' + formatNumber(point.y) + ' views';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Subscribers (log scale)' }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Avg Views (log scale)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update subject KPIs
+        function updateSubjectKPIs() {
+            document.getElementById('sb-kpi-physics').textContent = filteredData.filter(item => item.subject === 'Physics').length;
+            document.getElementById('sb-kpi-chemistry').textContent = filteredData.filter(item => item.subject === 'Chemistry').length;
+            document.getElementById('sb-kpi-maths').textContent = filteredData.filter(item => item.subject === 'Mathematics').length;
+            document.getElementById('sb-kpi-biology').textContent = filteredData.filter(item => item.subject === 'Biology').length;
+        }
+        
+        // Update subject charts
+        function updateSubjectCharts() {
+            // Radar Chart
+            const subjects = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'General'];
+            const subjectMetrics = subjects.map(subject => {
+                const subjectData = filteredData.filter(item => item.subject === subject);
+                const avgSubs = subjectData.length > 0 ? subjectData.reduce((sum, item) => sum + item.subscribers, 0) / subjectData.length : 0;
+                const avgViews = subjectData.length > 0 ? subjectData.reduce((sum, item) => sum + item.avg_views, 0) / subjectData.length : 0;
+                const avgEngagement = subjectData.length > 0 ? subjectData.reduce((sum, item) => sum + item.engagement_rate, 0) / subjectData.length : 0;
+                const count = subjectData.length;
+                return { subject, avgSubs, avgViews, avgEngagement, count };
+            });
+            
+            renderChart('chart-sb-radar', {
+                type: 'radar',
+                data: {
+                    labels: subjects,
+                    datasets: [
+                        {
+                            label: 'Avg Subscribers (normalized)',
+                            data: subjectMetrics.map(m => Math.min(m.avgSubs / 10000, 100)),
+                            borderColor: '#1e40af',
+                            backgroundColor: 'rgba(30, 64, 175, 0.2)'
+                        },
+                        {
+                            label: 'Avg Views (normalized)',
+                            data: subjectMetrics.map(m => Math.min(m.avgViews / 1000, 100)),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Stacked Bar
+            const coreAreas = ['JEE', 'NEET', 'JEE/NEET', 'OTHER'];
+            const stackedData = coreAreas.map(core => {
+                return subjects.map(subject => {
+                    return filteredData.filter(item => item.core_area === core && item.subject === subject).length;
+                });
+            });
+            
+            renderChart('chart-sb-stacked', {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: coreAreas.map((core, index) => ({
+                        label: core,
+                        data: stackedData[index],
+                        backgroundColor: ['#1e3a8a', '#1e40af', '#2563eb', '#3b82f6'][index]
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Engagement Comparison
+            renderChart('chart-sb-engagement', {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [{
+                        label: 'Avg Engagement Rate',
+                        data: subjectMetrics.map(m => m.avgEngagement),
+                        backgroundColor: '#2563eb'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Polar Area
+            renderChart('chart-sb-polar', {
+                type: 'polarArea',
+                data: {
+                    labels: subjects,
+                    datasets: [{
+                        data: subjectMetrics.map(m => m.count),
+                        backgroundColor: ['rgba(30, 64, 175, 0.7)', 'rgba(37, 99, 235, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(96, 165, 250, 0.7)', 'rgba(147, 197, 253, 0.7)']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        // Update platform KPIs
+        function updatePlatformKPIs() {
+            const youtubeCount = filteredData.filter(item => item.platform === 'YouTube').length;
+            const otherCount = filteredData.filter(item => item.platform === 'Other').length;
+            const youtubeSubs = filteredData.filter(item => item.platform === 'YouTube').reduce((sum, item) => sum + item.subscribers, 0);
+            const crossPercent = filteredData.length > 0 ? ((filteredData.filter(item => item.cross_platform === 'Yes').length / filteredData.length) * 100).toFixed(1) : 0;
+            
+            document.getElementById('pl-kpi-youtube').textContent = youtubeCount;
+            document.getElementById('pl-kpi-other').textContent = otherCount;
+            document.getElementById('pl-kpi-yt-subs').textContent = formatNumber(youtubeSubs);
+            document.getElementById('pl-kpi-cross').textContent = crossPercent + '%';
+        }
+        
+        // Update platform charts
+        function updatePlatformCharts() {
+            // Platform Comparison
+            const platforms = ['YouTube', 'Other'];
+            const platformMetrics = platforms.map(platform => {
+                const platformData = filteredData.filter(item => item.platform === platform);
+                return {
+                    platform,
+                    subs: platformData.reduce((sum, item) => sum + item.subscribers, 0),
+                    views: platformData.reduce((sum, item) => sum + item.avg_views, 0),
+                    count: platformData.length
+                };
+            });
+            
+            renderChart('chart-pl-comparison', {
+                type: 'bar',
+                data: {
+                    labels: platforms,
+                    datasets: [
+                        {
+                            label: 'Total Subscribers',
+                            data: platformMetrics.map(p => p.subs),
+                            backgroundColor: '#1e40af'
+                        },
+                        {
+                            label: 'Total Views',
+                            data: platformMetrics.map(p => p.views),
+                            backgroundColor: '#3b82f6'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Cross Platform Types
+            const crossTypes = {};
+            filteredData.filter(item => item.cross_platform === 'Yes').forEach(item => {
+                const types = item.cross_type.split(',').map(t => t.trim());
+                types.forEach(type => {
+                    crossTypes[type] = (crossTypes[type] || 0) + 1;
+                });
+            });
+            
+            renderChart('chart-pl-cross-types', {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(crossTypes),
+                    datasets: [{
+                        data: Object.values(crossTypes),
+                        backgroundColor: ['#1e3a8a', '#1e40af', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+            
+            // Platform Engagement
+            renderChart('chart-pl-engagement', {
+                type: 'line',
+                data: {
+                    labels: platforms,
+                    datasets: [{
+                        label: 'Avg Engagement Rate',
+                        data: platformMetrics.map(p => {
+                            const platformData = filteredData.filter(item => item.platform === p.platform);
+                            return platformData.length > 0 ? platformData.reduce((sum, item) => sum + item.engagement_rate, 0) / platformData.length : 0;
+                        }),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Platform Growth Area
+            const yearPlatformData = {};
+            filteredData.forEach(item => {
+                if (!yearPlatformData[item.start_year]) {
+                    yearPlatformData[item.start_year] = {};
+                }
+                if (!yearPlatformData[item.start_year][item.platform]) {
+                    yearPlatformData[item.start_year][item.platform] = 0;
+                }
+                yearPlatformData[item.start_year][item.platform] += item.subscribers;
+            });
+            
+            const sortedYears = Object.keys(yearPlatformData).sort();
+            renderChart('chart-pl-area', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: platforms.map((platform, index) => ({
+                        label: platform,
+                        data: sortedYears.map(year => yearPlatformData[year]?.[platform] || 0),
+                        borderColor: ['#1e40af', '#3b82f6'][index],
+                        backgroundColor: ['rgba(30, 64, 175, 0.3)', 'rgba(59, 130, 246, 0.3)'][index],
+                        fill: true
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        // Update trend charts
+        function updateTrendCharts() {
+            // Timeline
+            const yearCounts = {};
+            filteredData.forEach(item => {
+                yearCounts[item.start_year] = (yearCounts[item.start_year] || 0) + 1;
+            });
+            const sortedYears = Object.keys(yearCounts).sort();
+            
+            renderChart('chart-tr-timeline', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        label: 'Channels Created',
+                        data: sortedYears.map(year => yearCounts[year]),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Subscriber Growth
+            const yearSubs = {};
+            filteredData.forEach(item => {
+                if (!yearSubs[item.start_year]) {
+                    yearSubs[item.start_year] = 0;
+                }
+                yearSubs[item.start_year] += item.subscribers;
+            });
+            
+            renderChart('chart-tr-subs-growth', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        label: 'Total Subscribers',
+                        data: sortedYears.map(year => yearSubs[year] || 0),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.3)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Engagement Trend
+            const yearEngagement = {};
+            filteredData.forEach(item => {
+                if (!yearEngagement[item.start_year]) {
+                    yearEngagement[item.start_year] = { sum: 0, count: 0 };
+                }
+                yearEngagement[item.start_year].sum += item.engagement_rate;
+                yearEngagement[item.start_year].count += 1;
+            });
+            
+            renderChart('chart-tr-engagement-trend', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        label: 'Avg Engagement Rate',
+                        data: sortedYears.map(year => {
+                            const data = yearEngagement[year];
+                            return data ? data.sum / data.count : 0;
+                        }),
+                        borderColor: '#2563eb',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Cross Platform Adoption
+            const yearCross = {};
+            filteredData.forEach(item => {
+                if (!yearCross[item.start_year]) {
+                    yearCross[item.start_year] = { total: 0, cross: 0 };
+                }
+                yearCross[item.start_year].total += 1;
+                if (item.cross_platform === 'Yes') {
+                    yearCross[item.start_year].cross += 1;
+                }
+            });
+            
+            renderChart('chart-tr-cross-adoption', {
+                type: 'line',
+                data: {
+                    labels: sortedYears,
+                    datasets: [{
+                        label: 'Cross Platform %',
+                        data: sortedYears.map(year => {
+                            const data = yearCross[year];
+                            return data ? (data.cross / data.total * 100) : 0;
+                        }),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+        
+        // Update table
+        function updateTable() {
+            const tbody = document.getElementById('data-table-body');
+            tbody.innerHTML = '';
+            
+            filteredData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="font-semibold">${item.name}</td>
+                    <td>${item.channel}</td>
+                    <td><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${item.platform}</span></td>
+                    <td><span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs">${item.core_area}</span></td>
+                    <td>${item.subject}</td>
+                    <td class="font-semibold">${formatNumber(item.subscribers)}</td>
+                    <td>${formatNumber(item.avg_views)}</td>
+                    <td>${item.engagement_rate.toFixed(1)}%</td>
+                    <td>${item.cross_platform === 'Yes' ? '<span class="text-green-600">✓</span>' : '<span class="text-red-600">✗</span>'}</td>
+                    <td>${item.auditor}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('table-record-count').textContent = `Showing ${filteredData.length} records`;
+        }
+        
+        // Filter table
+        function filterTable() {
+            const searchTerm = document.getElementById('table-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#data-table-body tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        // Load creator profile
+        function loadCreatorProfile() {
+            const selector = document.getElementById('creator-selector');
+            const creatorName = selector.value;
+            
+            if (!creatorName) {
+                document.getElementById('creator-profile').classList.add('hidden');
+                return;
+            }
+            
+            const creator = rawData.find(item => item.name === creatorName);
+            if (!creator) return;
+            
+            document.getElementById('creator-profile').classList.remove('hidden');
+            
+            // Update profile info
+            document.getElementById('profile-initials').textContent = creator.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('profile-name').textContent = creator.name;
+            document.getElementById('profile-channel').textContent = '@' + creator.channel;
+            document.getElementById('profile-platform').textContent = creator.platform;
+            document.getElementById('profile-core').textContent = creator.core_area;
+            document.getElementById('profile-subject').textContent = creator.subject;
+            document.getElementById('profile-year').textContent = creator.start_year;
+            document.getElementById('profile-subs').textContent = formatNumber(creator.subscribers);
+            document.getElementById('profile-views').textContent = formatNumber(creator.avg_views);
+            document.getElementById('profile-engagement').textContent = creator.engagement_rate.toFixed(1) + '%';
+            document.getElementById('profile-cross').textContent = creator.cross_platform;
+            document.getElementById('profile-keypoints').textContent = creator.key_points || '-';
+            
+            // Creator Radar Chart
+            const maxSubs = Math.max(...rawData.map(item => item.subscribers));
+            const maxViews = Math.max(...rawData.map(item => item.avg_views));
+            const maxEngagement = Math.max(...rawData.map(item => item.engagement_rate));
+            
+            renderChart('chart-creator-radar', {
+                type: 'radar',
+                data: {
+                    labels: ['Subscribers', 'Views', 'Engagement', 'Longevity', 'Cross Platform'],
+                    datasets: [{
+                        label: creator.name,
+                        data: [
+                            (creator.subscribers / maxSubs) * 100,
+                            (creator.avg_views / maxViews) * 100,
+                            (creator.engagement_rate / maxEngagement) * 100,
+                            ((2024 - creator.start_year) / 20) * 100,
+                            creator.cross_platform === 'Yes' ? 100 : 0
+                        ],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+            
+            // Creator Gauge
+            renderChart('chart-creator-gauge', {
+                type: 'doughnut',
+                data: {
+                    labels: ['Engagement', 'Remaining'],
+                    datasets: [{
+                        data: [Math.min(creator.engagement_rate, 100), Math.max(100 - creator.engagement_rate, 0)],
+                        backgroundColor: ['#2563eb', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+        
+        // Random creator
+        function randomCreator() {
+            const selector = document.getElementById('creator-selector');
+            const randomIndex = Math.floor(Math.random() * rawData.length);
+            selector.selectedIndex = randomIndex + 1;
+            loadCreatorProfile();
+        }
+        
+        // Render chart helper
+        function renderChart(canvasId, config) {
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
+            }
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                chartInstances[canvasId] = new Chart(canvas, config);
+            }
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

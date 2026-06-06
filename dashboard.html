@@ -946,7 +946,9 @@
             try {
                 // Add timestamp to prevent caching
                 const timestamp = new Date().getTime();
+                console.log(`Fetching dashboard_data.json?t=${timestamp}`);
                 const response = await fetch(`dashboard_data.json?t=${timestamp}`);
+                console.log(`Fetch response status: ${response.status}`);
                 const rawJsonData = await response.json();
                 console.log(`Loaded ${rawJsonData.length} raw records from JSON`);
                 rawData = normalizeData(rawJsonData);
@@ -954,6 +956,7 @@
                 initializeDashboard();
             } catch (error) {
                 console.error('Error loading data:', error);
+                console.log('Falling back to embedded data');
                 // Fallback to embedded data if fetch fails
                 rawData = getFallbackData();
                 filteredData = [...rawData];

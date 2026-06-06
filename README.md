@@ -15,7 +15,6 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![Code size](https://img.shields.io/github/languages/code-size/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![Lines of code](https://img.shields.io/tokei/lines/github/Gyanankur23/youtube-instagram-influencer-dashboard)
-![Maintenance](https://img.shields.io/maintenance/yes/2026)
 ![Activity](https://img.shields.io/github/commit-activity/m/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![Made with](https://img.shields.io/badge/Made%20with-HTML5-red)
 ![Platform](https://img.shields.io/badge/Platform-Web-blue)

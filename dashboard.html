@@ -880,7 +880,7 @@
         
         // Normalize data from raw Excel format
         function normalizeData(data) {
-            return data.map(item => {
+            const normalized = data.map(item => {
                 // Normalize column names (handle both YouTube and Instagram sheet variations)
                 const name = item.name || item.Name || '';
                 const channelName = item.Channel_Name || '';
@@ -924,13 +924,21 @@
                     engagement_rate: parseFloat(engagementRate)
                 };
             });
+            
+            // Filter out records without names
+            const filtered = normalized.filter(item => item.name && item.name.trim() !== '');
+            console.log(`Normalized ${normalized.length} records, filtered to ${filtered.length} valid records`);
+            return filtered;
         }
         
         // Load data from JSON file
         async function loadData() {
             try {
-                const response = await fetch('dashboard_data.json');
+                // Add timestamp to prevent caching
+                const timestamp = new Date().getTime();
+                const response = await fetch(`dashboard_data.json?t=${timestamp}`);
                 const rawJsonData = await response.json();
+                console.log(`Loaded ${rawJsonData.length} raw records from JSON`);
                 rawData = normalizeData(rawJsonData);
                 filteredData = [...rawData];
                 initializeDashboard();
@@ -972,6 +980,7 @@
         // Initialize dashboard
         function initializeDashboard() {
             document.getElementById('total-records').textContent = rawData.length;
+            console.log(`Dashboard initialized with ${rawData.length} records`);
             populateCreatorSelector();
             applyFilters();
         }

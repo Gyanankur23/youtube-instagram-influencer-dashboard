@@ -884,7 +884,9 @@
         
         // Normalize data from raw Excel format
         function normalizeData(data) {
-            const normalized = data.map(item => {
+            console.log(`Starting normalization with ${data.length} raw records`);
+            
+            const normalized = data.map((item, index) => {
                 // Normalize column names (handle both YouTube and Instagram sheet variations)
                 const name = item.name || item.Name || '';
                 const channelName = item.Channel_Name || '';
@@ -911,6 +913,10 @@
                 
                 // Calculate engagement rate
                 const engagementRate = followers > 0 ? ((avgViews / followers) * 100).toFixed(2) : 0;
+                
+                if (index < 5) {
+                    console.log(`Record ${index}: name="${name}", platform="${platform}", subscribers=${followers}`);
+                }
                 
                 return {
                     name: name,

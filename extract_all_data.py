@@ -23,6 +23,9 @@ combined_df = pd.concat([youtube_df, instagram_df], ignore_index=True)
 
 print(f'Total combined records: {len(combined_df)}')
 
+# Replace NaN with None (which becomes null in JSON)
+combined_df = combined_df.where(pd.notnull(combined_df), None)
+
 # Export to JSON without any processing
 records = combined_df.to_dict(orient='records')
 

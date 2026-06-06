@@ -17,7 +17,6 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![Maintenance](https://img.shields.io/maintenance/yes/2026)
 ![Activity](https://img.shields.io/github/commit-activity/m/Gyanankur23/youtube-instagram-influencer-dashboard)
-![HitCounter](https://hits.dwyl.com/Gyanankur23/youtube-instagram-influencer-dashboard.svg)
 ![Made with](https://img.shields.io/badge/Made%20with-HTML5-red)
 ![Platform](https://img.shields.io/badge/Platform-Web-blue)
 ![Status](https://img.shields.io/badge/Status-Active-success)

@@ -993,6 +993,8 @@
             console.log(`Dashboard initialized with ${rawData.length} records`);
             populateCreatorSelector();
             applyFilters();
+            // Show overview page by default
+            switchPage('overview');
         }
         
         // Populate creator selector
@@ -1005,6 +1007,7 @@
                 option.textContent = `${creator.name} (${creator.platform})`;
                 selector.appendChild(option);
             });
+            switchPage('overview');
         }
         
         // Switch page

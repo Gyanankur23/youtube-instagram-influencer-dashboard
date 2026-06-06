@@ -345,6 +345,10 @@
                     
                     <!-- KPI Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                        <div class="powerbi-card p-4 bg-yellow-50 border-yellow-200">
+                            <p class="kpi-label text-yellow-700">DEBUG: Raw Records</p>
+                            <p class="kpi-value text-yellow-900" id="debug-raw">0</p>
+                        </div>
                         <div class="powerbi-card p-4">
                             <p class="kpi-label">Total Creators</p>
                             <p class="kpi-value" id="kpi-total-creators">0</p>
@@ -980,6 +984,7 @@
         // Initialize dashboard
         function initializeDashboard() {
             document.getElementById('total-records').textContent = rawData.length;
+            document.getElementById('debug-raw').textContent = rawData.length;
             console.log(`Dashboard initialized with ${rawData.length} records`);
             populateCreatorSelector();
             applyFilters();

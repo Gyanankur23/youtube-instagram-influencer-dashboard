@@ -878,11 +878,60 @@
         let filteredData = [];
         let chartInstances = {};
         
+        // Normalize data from raw Excel format
+        function normalizeData(data) {
+            return data.map(item => {
+                // Normalize column names (handle both YouTube and Instagram sheet variations)
+                const name = item.name || item.Name || '';
+                const channelName = item.Channel_Name || '';
+                const channelLink = item['Channel Link'] || item['Channel link'] || '';
+                const startDate = item.Channel_Start_Date || '';
+                const followers = item['Follower/Subscriber_count'] || 0;
+                const avgViews = item.Avg_Views_count || 0;
+                const coreArea = item.Core_Area || '';
+                const subject = item.Subject || '';
+                const keyPoints = item.Key_points || '';
+                const crossPlatform = item.Cross_Platform || '';
+                const crossType = item.Cross_Platform_Type || '';
+                const uploadedBy = item['Uploaded by'] || '';
+                const platform = item.Platform || '';
+                
+                // Extract year from start date
+                let startYear = 2020;
+                if (startDate) {
+                    const date = new Date(startDate);
+                    if (!isNaN(date)) {
+                        startYear = date.getFullYear();
+                    }
+                }
+                
+                // Calculate engagement rate
+                const engagementRate = followers > 0 ? ((avgViews / followers) * 100).toFixed(2) : 0;
+                
+                return {
+                    name: name,
+                    channel: channelName,
+                    platform: platform,
+                    start_year: startYear,
+                    subscribers: followers,
+                    avg_views: avgViews,
+                    core_area: coreArea,
+                    subject: subject,
+                    key_points: keyPoints,
+                    cross_platform: crossPlatform,
+                    cross_type: crossType,
+                    auditor: uploadedBy,
+                    engagement_rate: parseFloat(engagementRate)
+                };
+            });
+        }
+        
         // Load data from JSON file
         async function loadData() {
             try {
                 const response = await fetch('dashboard_data.json');
-                rawData = await response.json();
+                const rawJsonData = await response.json();
+                rawData = normalizeData(rawJsonData);
                 filteredData = [...rawData];
                 initializeDashboard();
             } catch (error) {

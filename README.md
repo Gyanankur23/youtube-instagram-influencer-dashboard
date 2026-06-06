@@ -8,7 +8,6 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![GitHub license](https://img.shields.io/github/license/Gyanankur23/youtube-instagram-influencer-dashboard)
-![GitHub release](https://img.shields.io/github/release/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Gyanankur23/youtube-instagram-influencer-dashboard)
 ![GitHub contributors](https://img.shields.io/github/contributors/Gyanankur23/youtube-instagram-influencer-dashboard)

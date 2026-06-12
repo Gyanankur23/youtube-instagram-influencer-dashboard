@@ -69,7 +69,7 @@ Based on the Power BI dashboard analysis with 10K-100K subscriber range filter a
 - Suitable for building learning communities around creator content
 
 ### 4. Engagement Rate
-- # Dax Query Used ->
+- **Dax Query Used ->**
  Engagement Rate = 
 DIVIDE(
     SUM('Sheet1'[Avg_Views_count]),

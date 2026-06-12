@@ -12,8 +12,7 @@ This report analyzes YouTube creator data to identify the optimal subscriber ran
 ---
 
 ## Power BI Matrix Data Overview
-
-![Power BI Matrix Data](yt final report/matrix.png)
+<img width="1811" height="492" alt="image" src="https://github.com/user-attachments/assets/da7b2a01-9dba-4e66-92f8-ed9bbd714c5f" />
 
 ---
 
